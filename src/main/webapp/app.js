@@ -43,14 +43,23 @@ function renderSelection(trailsLayer) {
 
 function showReport(report) {
     const item = document.createElement("li");
-    item.className = "list-group-item d-flex align-items-baseline justify-content-between gap-2";
+    item.className = "list-group-item";
+    const summary = document.createElement("div");
+    summary.className = "d-flex align-items-baseline justify-content-between gap-2";
     const heading = document.createElement("strong");
     heading.textContent = conditions[report.condition];
     const timestamp = document.createElement("time");
     timestamp.className = "small text-body-secondary";
     timestamp.dateTime = report.reportedAt;
     timestamp.textContent = reportFormat.format(new Date(report.reportedAt));
-    item.append(heading, timestamp);
+    summary.append(heading, timestamp);
+    item.append(summary);
+    if (report.note) {
+        const note = document.createElement("p");
+        note.className = "report-note small mt-1 mb-0";
+        note.textContent = report.note;
+        item.append(note);
+    }
     return item;
 }
 

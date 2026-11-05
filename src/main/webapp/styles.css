@@ -15,6 +15,7 @@
 .hard { background: #ae3d30; }
 
 #reports { max-height: 13rem; }
+.report-note { overflow-wrap: anywhere; white-space: pre-wrap; }
 .card[hidden] { display: none; }
 [role="status"]:empty { margin-bottom: 0; }
 

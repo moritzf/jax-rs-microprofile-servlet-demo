@@ -65,7 +65,15 @@ public class TrailResource {
                 || !CONDITIONS.contains(condition.getString())) {
             throw error(400, "Bitte einen gültigen Zustand angeben.");
         }
-        var report = reports.add(id, condition.getString());
+        var noteValue = request.get("note");
+        if (noteValue != null && !(noteValue instanceof JsonString)) {
+            throw error(400, "Die Notiz muss ein Text sein.");
+        }
+        var note = request.getString("note", "").strip();
+        if (note.length() > 280) {
+            throw error(400, "Die Notiz darf höchstens 280 Zeichen lang sein.");
+        }
+        var report = reports.add(id, condition.getString(), note);
         return Response.created(uri.getAbsolutePathBuilder().path(report.getString("id")).build())
                 .entity(report).build();
     }

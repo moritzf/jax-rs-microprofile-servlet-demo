@@ -33,11 +33,11 @@ public class Reports {
                         id UUID PRIMARY KEY,
                         trail_id VARCHAR(64) NOT NULL,
                         condition VARCHAR(16) NOT NULL,
+                        note VARCHAR(280),
                         reported_at TIMESTAMP(6) WITH TIME ZONE NOT NULL
                     )
                     """);
-            // Allow inserts without a note in databases created by the previous version.
-            statement.executeUpdate("ALTER TABLE reports ALTER COLUMN IF EXISTS note DROP NOT NULL");
+            statement.executeUpdate("ALTER TABLE reports ADD COLUMN IF NOT EXISTS note VARCHAR(280)");
             statement.executeUpdate("""
                     CREATE INDEX IF NOT EXISTS reports_by_trail ON reports (trail_id, reported_at DESC, id)
                     """);
@@ -46,26 +46,27 @@ public class Reports {
         }
     }
 
-    public JsonObject add(String trailId, String condition) throws SQLException {
+    public JsonObject add(String trailId, String condition, String note) throws SQLException {
         var id = UUID.randomUUID();
         var time = Instant.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS);
         try (var connection = dataSource.getConnection();
              var statement = connection.prepareStatement("""
-                     INSERT INTO reports (id, trail_id, condition, reported_at) VALUES (?, ?, ?, ?)
+                     INSERT INTO reports (id, trail_id, condition, note, reported_at) VALUES (?, ?, ?, ?, ?)
                      """)) {
             statement.setObject(1, id);
             statement.setString(2, trailId);
             statement.setString(3, condition);
-            statement.setObject(4, time);
+            statement.setString(4, note);
+            statement.setObject(5, time);
             statement.executeUpdate();
         }
-        return report(id, condition, time);
+        return report(id, condition, note, time);
     }
 
     public JsonArray list(String trailId) throws SQLException {
         try (var connection = dataSource.getConnection();
              var statement = connection.prepareStatement("""
-                     SELECT id, condition, reported_at FROM reports
+                     SELECT id, condition, note, reported_at FROM reports
                      WHERE trail_id = ? ORDER BY reported_at DESC, id LIMIT 20
                      """)) {
             statement.setString(1, trailId);
@@ -73,7 +74,7 @@ public class Reports {
                 var reports = Json.createArrayBuilder();
                 while (result.next()) {
                     reports.add(report(result.getObject("id", UUID.class), result.getString("condition"),
-                            result.getObject("reported_at", Instant.class)));
+                            result.getString("note"), result.getObject("reported_at", Instant.class)));
                 }
                 return reports.build();
             }
@@ -83,22 +84,22 @@ public class Reports {
     public Optional<JsonObject> find(String trailId, UUID reportId) throws SQLException {
         try (var connection = dataSource.getConnection();
              var statement = connection.prepareStatement("""
-                     SELECT condition, reported_at FROM reports WHERE trail_id = ? AND id = ?
+                     SELECT condition, note, reported_at FROM reports WHERE trail_id = ? AND id = ?
                      """)) {
             statement.setString(1, trailId);
             statement.setObject(2, reportId);
             try (var result = statement.executeQuery()) {
                 if (result.next()) {
                     return Optional.of(report(reportId, result.getString("condition"),
-                            result.getObject("reported_at", Instant.class)));
+                            result.getString("note"), result.getObject("reported_at", Instant.class)));
                 }
                 return Optional.empty();
             }
         }
     }
 
-    private static JsonObject report(UUID id, String condition, Instant time) {
+    private static JsonObject report(UUID id, String condition, String note, Instant time) {
         return Json.createObjectBuilder().add("id", id.toString()).add("condition", condition)
-                .add("reportedAt", time.toString()).build();
+                .add("note", note == null ? "" : note).add("reportedAt", time.toString()).build();
     }
 }
