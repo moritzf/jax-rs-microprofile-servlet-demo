@@ -3,3 +3,6 @@
 *.mv.db
 *.trace.db
 .DS_Store
+/deploy/data/
+/deploy/secrets/
+/deploy/state/

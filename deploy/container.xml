@@ -1,0 +1,3 @@
+<server>
+    <httpEndpoint id="defaultHttpEndpoint" host="*" />
+</server>

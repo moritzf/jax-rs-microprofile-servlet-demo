@@ -1,0 +1,56 @@
+name: Publish production image
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-image-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Build and test
+        run: |
+          docker buildx create --use --driver docker-container
+          docker buildx build --platform linux/amd64 --load --tag trailzustand:smoke .
+          sudo install -d -o 1001 -g 0 -m 0750 "$RUNNER_TEMP/trail-data"
+          docker run --detach --name trail-smoke --init --user 1001:0 \
+            --cap-drop ALL --security-opt no-new-privileges \
+            --publish 127.0.0.1:9080:9080 \
+            --mount "type=bind,source=$RUNNER_TEMP/trail-data,target=/data" \
+            --env OSM_MTB_TRAILZUSTAND_DB_PATH=/data/trails trailzustand:smoke
+          curl --fail --silent --show-error --retry 30 --retry-delay 2 \
+            --retry-all-errors --max-time 5 http://127.0.0.1:9080/api/trails/kammspur/reports
+          sudo test -f "$RUNNER_TEMP/trail-data/trails.mv.db"
+
+      - name: Show smoke test logs
+        if: failure()
+        run: docker logs trail-smoke || true
+
+      - name: Publish commit and production tags
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          printf '%s' "$GHCR_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          trap 'docker logout ghcr.io' EXIT
+          docker buildx build --platform linux/amd64,linux/arm64 --push \
+            --label "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --label "org.opencontainers.image.revision=$GITHUB_SHA" \
+            --tag "$image:$GITHUB_SHA" --tag "$image:production" .

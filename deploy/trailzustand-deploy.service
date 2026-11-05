@@ -1,0 +1,12 @@
+[Unit]
+Description=Deploy the current Trailzustand production image
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/trailzustand
+ExecStart=/bin/bash /opt/trailzustand/deploy.sh
+TimeoutStartSec=10min
+UMask=0077

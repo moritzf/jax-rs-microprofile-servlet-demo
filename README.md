@@ -1,5 +1,7 @@
 # OSM MTB Trailzustand
 
+**[Live-Demo öffnen](https://mtbtrailzustand.dpdns.org/)**
+
 ![App-Ansicht mit OpenStreetMap-Karte, Wettervorhersage und Zustandsmeldungen für die Kammspur](docs/app-screenshot.jpg)
 
 Interaktive MTB-Karte für den Tegernsee mit drei fiktiven Beispieltrails. Du kannst GPX-Tracks oder -Routen bis 2 MiB importieren, die stündliche Regenwahrscheinlichkeit am Trail-Einstieg abrufen und Zustände mit optionaler Notiz melden. Den GPX-Import findest du ganz unten in der Seitenleiste. Dafür gibst du einen Trailnamen an. Kammspur und Hanglinie enthalten je drei Beispielmeldungen.
@@ -30,6 +32,21 @@ mvn liberty:dev
 ```
 
 Öffne [http://localhost:9080](http://localhost:9080). Mit `q` beendest du den Open-Liberty-Entwicklungsserver.
+
+## Docker und Deployment
+
+```sh
+docker build -t trailzustand:local .
+docker run --rm -p 127.0.0.1:9080:9080 \
+  --tmpfs /data:uid=1001,gid=0,mode=0750 \
+  -e OSM_MTB_TRAILZUSTAND_DB_PATH=/data/trails trailzustand:local
+```
+
+Das Image enthält Open Liberty und die WAR-Datei. Beim Build läuft `mvn verify`.
+Die lokale Vorschau speichert Daten im Container. Für den dauerhaften Betrieb
+siehe [Deployment auf OCI mit Cloudflare Tunnel](deploy/README.md).
+
+- [ ] **TODO für Projektadministratoren** – CI/CD mit GitHub Actions für das automatische Deployment auf den Demo-Server einrichten.
 
 ## Wartung
 

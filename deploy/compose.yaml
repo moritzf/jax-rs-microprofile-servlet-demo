@@ -1,0 +1,43 @@
+name: trailzustand
+
+services:
+  app:
+    image: ${APP_IMAGE:?Set APP_IMAGE to the app image reference}
+    user: "1001:0"
+    restart: unless-stopped
+    init: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 40s
+    environment:
+      OSM_MTB_TRAILZUSTAND_DB_PATH: /data/trails
+    ports:
+      - "127.0.0.1:9080:9080"
+    volumes:
+      - type: bind
+        source: ./data
+        target: /data
+        bind:
+          create_host_path: false
+          selinux: Z
+    logging:
+      driver: local
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.10.7
+    user: "65532:65532"
+    restart: unless-stopped
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    read_only: true
+    command: ["tunnel", "run", "--token-file", "/run/secrets/tunnel-token"]
+    volumes:
+      - type: bind
+        source: ./secrets/tunnel-token
+        target: /run/secrets/tunnel-token
+        read_only: true
+        bind:
+          create_host_path: false
+          selinux: Z
+    logging:
+      driver: local
