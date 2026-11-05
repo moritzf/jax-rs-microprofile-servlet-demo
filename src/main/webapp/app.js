@@ -75,22 +75,17 @@ async function loadForecast(id, signal) {
     try {
         const forecast = await request(`/${id}/forecast`, { signal });
         if (signal.aborted) return;
-        const firstHour = Date.parse(forecast.hours[0].time);
-        const twoHours = 2 * 60 * 60 * 1000;
-        const probabilities = new Map(forecast.hours.map(hour => [Date.parse(hour.time), hour.rainProbability]));
-        for (let slot = 0; slot < 3; slot++) {
-            const slotTime = new Date(firstHour + slot * twoHours);
-            const rainProbability = probabilities.get(slotTime.getTime());
+        for (const hour of forecast.hours) {
             const item = document.createElement("li");
             item.className = "col";
             const tile = document.createElement("div");
             tile.className = "bg-info-subtle rounded text-center p-2";
             const time = document.createElement("time");
             time.className = "d-block small text-body-secondary";
-            time.dateTime = slotTime.toISOString();
-            time.textContent = hourFormat.format(slotTime);
+            time.dateTime = hour.time;
+            time.textContent = hourFormat.format(new Date(hour.time));
             const probability = document.createElement("strong");
-            probability.textContent = rainProbability === undefined ? "–" : `${rainProbability} %`;
+            probability.textContent = `${hour.rainProbability} %`;
             tile.append(time, probability);
             item.append(tile);
             byId("forecast").append(item);
