@@ -12,6 +12,10 @@ mvn liberty:dev
 
 Öffne [http://localhost:9080](http://localhost:9080). Mit `q` beendest du den Entwicklungsserver.
 
+## GPX-Trail importieren
+
+Öffne **GPX-Trail importieren**, wähle eine Datei bis 2 MiB und lege den Schwierigkeitsgrad fest. Ein eigener Name ist optional. Pro Datei wird ein Trail in H2 gespeichert. Der Import verwendet GPX-Tracks und greift bei Bedarf auf GPX-Routen zurück. Getrennte Segmente bleiben getrennt. Die Karte springt nach dem Import zum neuen Trail.
+
 ## Technik
 
 - **Frontend:** Bootstrap, Leaflet und OpenStreetMap.
@@ -24,6 +28,8 @@ mvn liberty:dev
 | Methode und Pfad | Funktion |
 | --- | --- |
 | `GET /api/trails?bbox=11.72,47.69,11.81,47.75` | Trails im Kartenausschnitt als GeoJSON |
+| `POST /api/trails?difficulty=Mittel` | GPX-Datei mit `Content-Type: application/gpx+xml` importieren. Optional `name` angeben. |
+| `GET /api/trails/{id}` | Einzelnen Trail als GeoJSON abrufen |
 | `GET /api/trails/kammspur/forecast` | Regenvorhersage am Trail-Einstieg |
 | `GET /api/trails/kammspur/reports` | Zustandsmeldungen abrufen |
 | `POST /api/trails/kammspur/reports` | Zustand melden, zum Beispiel `{"condition":"muddy","note":"Matsch in der letzten Kurve."}` |
