@@ -6,10 +6,7 @@ import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.h2.jdbcx.JdbcDataSource;
 
-import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Optional;
@@ -17,16 +14,11 @@ import java.util.UUID;
 
 @ApplicationScoped
 public class Reports {
-    @Inject
-    @ConfigProperty(name = "osm-mtb-trailzustand.db.path")
-    String databasePath;
-
-    private final JdbcDataSource dataSource = new JdbcDataSource();
+    @Inject TrailDatabase database;
 
     @PostConstruct
     void initialize() {
-        dataSource.setURL("jdbc:h2:file:" + Path.of(databasePath).toAbsolutePath());
-        try (var connection = dataSource.getConnection();
+        try (var connection = database.connect();
              var statement = connection.createStatement()) {
             statement.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS reports (
@@ -69,7 +61,7 @@ public class Reports {
     public JsonObject add(String trailId, String condition, String note) throws SQLException {
         var id = UUID.randomUUID();
         var time = Instant.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS);
-        try (var connection = dataSource.getConnection();
+        try (var connection = database.connect();
              var statement = connection.prepareStatement("""
                      INSERT INTO reports (id, trail_id, condition, note, reported_at) VALUES (?, ?, ?, ?, ?)
                      """)) {
@@ -84,7 +76,7 @@ public class Reports {
     }
 
     public JsonArray list(String trailId) throws SQLException {
-        try (var connection = dataSource.getConnection();
+        try (var connection = database.connect();
              var statement = connection.prepareStatement("""
                      SELECT id, condition, note, reported_at FROM reports
                      WHERE trail_id = ? ORDER BY reported_at DESC, id LIMIT 20
@@ -102,7 +94,7 @@ public class Reports {
     }
 
     public Optional<JsonObject> find(String trailId, UUID reportId) throws SQLException {
-        try (var connection = dataSource.getConnection();
+        try (var connection = database.connect();
              var statement = connection.prepareStatement("""
                      SELECT condition, note, reported_at FROM reports WHERE trail_id = ? AND id = ?
                      """)) {

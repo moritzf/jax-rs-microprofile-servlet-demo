@@ -18,8 +18,11 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.xml.sax.SAXException;
 
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Set;
@@ -29,6 +32,8 @@ import java.util.UUID;
 @Produces("application/json")
 public class TrailResource {
     private static final Set<String> CONDITIONS = Set.of("dry", "damp", "muddy", "obstacle");
+    private static final Set<String> DIFFICULTIES = Set.of("Leicht", "Mittel", "Schwer");
+    private static final int MAX_GPX_BYTES = 2 * 1024 * 1024;
 
     @Inject TrailCatalog catalog;
     @Inject Reports reports;
@@ -36,8 +41,48 @@ public class TrailResource {
 
     @GET
     @Produces({"application/geo+json", "application/json"})
-    public JsonObject trails(@QueryParam("bbox") String bbox) {
+    public JsonObject trails(@QueryParam("bbox") String bbox) throws SQLException {
         return catalog.collection(bbox == null ? null : parseBounds(bbox));
+    }
+
+    @GET
+    @Path("/{id}")
+    @Produces({"application/geo+json", "application/json"})
+    public JsonObject trail(@PathParam("id") String id) throws SQLException {
+        return requireTrail(id);
+    }
+
+    @POST
+    @Consumes({"application/gpx+xml", "application/xml", "text/xml"})
+    @Produces({"application/geo+json", "application/json"})
+    public Response importTrail(InputStream input, @QueryParam("name") String name,
+                                @QueryParam("difficulty") String difficulty, @Context UriInfo uri)
+            throws IOException, SQLException {
+        if (difficulty == null || !DIFFICULTIES.contains(difficulty)) {
+            throw error(400, "Bitte einen gültigen Schwierigkeitsgrad angeben.");
+        }
+        var contents = input.readNBytes(MAX_GPX_BYTES + 1);
+        if (contents.length > MAX_GPX_BYTES) {
+            throw error(413, "Die GPX-Datei darf höchstens 2 MiB groß sein.");
+        }
+        GpxTrail gpx;
+        try {
+            gpx = GpxTrail.parse(contents);
+        } catch (SAXException e) {
+            throw error(400, "Die Datei enthält kein gültiges GPX-XML.");
+        } catch (IllegalArgumentException e) {
+            throw error(400, e.getMessage());
+        }
+        var trailName = name == null || name.isBlank() ? gpx.name() : name.strip();
+        if (trailName.isEmpty()) {
+            trailName = "Importierter Trail";
+        }
+        if (trailName.length() > 100) {
+            throw error(400, "Der Trailname darf höchstens 100 Zeichen lang sein.");
+        }
+        var trail = catalog.add(trailName, difficulty, gpx.segments());
+        return Response.created(uri.getAbsolutePathBuilder().path(trail.getString("id")).build())
+                .entity(trail).build();
     }
 
     @GET
@@ -80,8 +125,8 @@ public class TrailResource {
 
     @GET
     @Path("/{id}/forecast")
-    public JsonObject forecast(@PathParam("id") String id) {
-        var start = TrailCatalog.coordinates(requireTrail(id)).getJsonArray(0);
+    public JsonObject forecast(@PathParam("id") String id) throws SQLException {
+        var start = TrailCatalog.startCoordinates(requireTrail(id));
         JsonObject forecast;
         try {
             forecast = weather.forecast(start.getJsonNumber(1).doubleValue(), start.getJsonNumber(0).doubleValue(),
@@ -111,7 +156,7 @@ public class TrailResource {
         return Json.createObjectBuilder().add("hours", result).build();
     }
 
-    private JsonObject requireTrail(String id) {
+    private JsonObject requireTrail(String id) throws SQLException {
         return catalog.find(id).orElseThrow(() -> error(404, "Trail nicht gefunden."));
     }
 

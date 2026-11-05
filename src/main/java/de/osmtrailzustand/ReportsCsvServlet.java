@@ -27,13 +27,12 @@ public class ReportsCsvServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bitte einen Trail angeben.");
             return;
         }
-        if (catalog.find(trailId).isEmpty()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Trail nicht gefunden.");
-            return;
-        }
-
         JsonArray history;
         try {
+            if (catalog.find(trailId).isEmpty()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Trail nicht gefunden.");
+                return;
+            }
             history = reports.list(trailId);
         } catch (SQLException e) {
             throw new ServletException("Zustandsmeldungen konnten nicht geladen werden.", e);
