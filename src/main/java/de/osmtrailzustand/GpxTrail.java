@@ -15,8 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-record GpxTrail(String name, JsonArray segments) {
-    static GpxTrail parse(byte[] contents) throws IOException, SAXException {
+final class GpxTrail {
+    private GpxTrail() {
+    }
+
+    static JsonArray parse(byte[] contents) throws IOException, SAXException {
         var factory = DocumentBuilderFactory.newDefaultInstance();
         factory.setNamespaceAware(true);
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -39,17 +42,12 @@ record GpxTrail(String name, JsonArray segments) {
         }
 
         var segments = new ArrayList<JsonArray>();
-        String name = "";
         for (var track : children(root, "trk")) {
-            int before = segments.size();
             for (var segment : children(track, "trkseg")) {
                 var line = line(segment, "trkpt");
                 if (line.size() >= 2) {
                     segments.add(line);
                 }
-            }
-            if (name.isEmpty() && segments.size() > before) {
-                name = nameOf(track);
             }
         }
         if (segments.isEmpty()) {
@@ -57,22 +55,13 @@ record GpxTrail(String name, JsonArray segments) {
                 var line = line(route, "rtept");
                 if (line.size() >= 2) {
                     segments.add(line);
-                    if (name.isEmpty()) {
-                        name = nameOf(route);
-                    }
                 }
             }
         }
         if (segments.isEmpty()) {
             throw new IllegalArgumentException("Die GPX-Datei enthält keinen Track oder keine Route mit mindestens zwei Punkten.");
         }
-        if (name.isEmpty()) {
-            name = children(root, "metadata").stream().findFirst().map(GpxTrail::nameOf).orElse("");
-        }
-        if (name.isEmpty()) {
-            name = nameOf(root);
-        }
-        return new GpxTrail(name, Json.createArrayBuilder(segments).build());
+        return Json.createArrayBuilder(segments).build();
     }
 
     private static JsonArray line(Element parent, String pointName) {
@@ -95,10 +84,6 @@ record GpxTrail(String name, JsonArray segments) {
             // Missing or malformed coordinates are reported the same way as out-of-range coordinates.
         }
         throw new IllegalArgumentException("Die GPX-Datei enthält ungültige Koordinaten.");
-    }
-
-    private static String nameOf(Element parent) {
-        return children(parent, "name").stream().findFirst().map(element -> element.getTextContent().strip()).orElse("");
     }
 
     private static List<Element> children(Element parent, String name) {

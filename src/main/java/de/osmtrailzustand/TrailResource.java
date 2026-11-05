@@ -2,6 +2,7 @@ package de.osmtrailzustand;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
@@ -61,26 +62,26 @@ public class TrailResource {
         if (difficulty == null || !DIFFICULTIES.contains(difficulty)) {
             throw error(400, "Bitte einen gültigen Schwierigkeitsgrad angeben.");
         }
+        var trailName = name == null ? "" : name.strip();
+        if (trailName.isEmpty()) {
+            throw error(400, "Bitte einen Trailnamen angeben.");
+        }
+        if (trailName.length() > 100) {
+            throw error(400, "Der Trailname darf höchstens 100 Zeichen lang sein.");
+        }
         var contents = input.readNBytes(MAX_GPX_BYTES + 1);
         if (contents.length > MAX_GPX_BYTES) {
             throw error(413, "Die GPX-Datei darf höchstens 2 MiB groß sein.");
         }
-        GpxTrail gpx;
+        JsonArray segments;
         try {
-            gpx = GpxTrail.parse(contents);
+            segments = GpxTrail.parse(contents);
         } catch (SAXException e) {
             throw error(400, "Die Datei enthält kein gültiges GPX-XML.");
         } catch (IllegalArgumentException e) {
             throw error(400, e.getMessage());
         }
-        var trailName = name == null || name.isBlank() ? gpx.name() : name.strip();
-        if (trailName.isEmpty()) {
-            trailName = "Importierter Trail";
-        }
-        if (trailName.length() > 100) {
-            throw error(400, "Der Trailname darf höchstens 100 Zeichen lang sein.");
-        }
-        var trail = catalog.add(trailName, difficulty, gpx.segments());
+        var trail = catalog.add(trailName, difficulty, segments);
         return Response.created(uri.getAbsolutePathBuilder().path(trail.getString("id")).build())
                 .entity(trail).build();
     }

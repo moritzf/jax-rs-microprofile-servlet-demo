@@ -2,7 +2,7 @@
 
 ![App-Ansicht mit OpenStreetMap-Karte, Wettervorhersage und Zustandsmeldungen für die Kammspur](docs/app-screenshot.jpg)
 
-Interaktive MTB-Karte für den Tegernsee mit drei fiktiven Beispieltrails. Du kannst GPX-Tracks oder -Routen bis 2 MiB importieren, die stündliche Regenwahrscheinlichkeit am Trail-Einstieg abrufen und Zustände mit optionaler Notiz melden. Kammspur und Hanglinie enthalten je drei Beispielmeldungen.
+Interaktive MTB-Karte für den Tegernsee mit drei fiktiven Beispieltrails. Du kannst GPX-Tracks oder -Routen bis 2 MiB importieren, die stündliche Regenwahrscheinlichkeit am Trail-Einstieg abrufen und Zustände mit optionaler Notiz melden. Den GPX-Import findest du ganz unten in der Seitenleiste. Dafür gibst du einen Trailnamen an. Kammspur und Hanglinie enthalten je drei Beispielmeldungen.
 
 ## Java-Technologien
 
@@ -34,7 +34,7 @@ mvn liberty:dev
 | Methode und Pfad | Funktion |
 | --- | --- |
 | `GET /api/trails?bbox=11.72,47.69,11.81,47.75` | Trails im Kartenausschnitt als GeoJSON |
-| `POST /api/trails?difficulty=Mittel` | GPX-Datei mit `Content-Type: application/gpx+xml` importieren. Optional `name` angeben. |
+| `POST /api/trails?difficulty=Mittel&name=Mein%20Trail` | GPX-Datei mit `Content-Type: application/gpx+xml` und einem Trailnamen importieren. |
 | `GET /api/trails/{id}` | Einzelnen Trail als GeoJSON abrufen |
 | `GET /api/trails/kammspur/forecast` | Regenvorhersage am Trail-Einstieg |
 | `GET /api/trails/kammspur/reports` | Zustandsmeldungen abrufen |
