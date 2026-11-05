@@ -105,7 +105,7 @@ async function loadForecast(id, signal) {
     }
 }
 
-function selectTrail(feature, trailsLayer) {
+function selectTrail(feature, trailsLayer, map) {
     selectedId = feature.id;
     detailRequest?.abort();
     detailRequest = new AbortController();
@@ -122,6 +122,7 @@ function selectTrail(feature, trailsLayer) {
     byId("form-status").textContent = "";
     byId("submit-report").disabled = pendingReports.has(selectedId);
     byId("details").hidden = false;
+    map.fitBounds(L.geoJSON(feature).getBounds(), { padding: [20, 20], maxZoom: 16, animate: false });
 
     void loadReports(selectedId);
     void loadForecast(selectedId, detailRequest.signal);
@@ -166,7 +167,7 @@ function startMap() {
     const trailHitboxes = L.geoJSON(null, {
         style: { className: "trail-hitbox", weight: 32, opacity: 0 },
         onEachFeature(feature, layer) {
-            layer.on("click", () => selectTrail(feature, trailsLayer));
+            layer.on("click", () => selectTrail(feature, trailsLayer, map));
         }
     }).addTo(map);
 
@@ -199,7 +200,7 @@ function startMap() {
                 difficulty.style.color = colors[feature.properties.difficulty];
                 difficulty.textContent = feature.properties.difficulty;
                 button.append(difficulty);
-                button.addEventListener("click", () => selectTrail(feature, trailsLayer));
+                button.addEventListener("click", () => selectTrail(feature, trailsLayer, map));
                 return button;
             });
             byId("trails").replaceChildren(...items);
@@ -233,8 +234,7 @@ function startMap() {
                 headers: { "Content-Type": "application/gpx+xml" },
                 body: file
             });
-            map.fitBounds(L.geoJSON(trail).getBounds(), { padding: [20, 20], maxZoom: 16, animate: false });
-            selectTrail(trail, trailsLayer);
+            selectTrail(trail, trailsLayer, map);
             form.reset();
             status.textContent = "Trail importiert.";
         } catch (error) {
