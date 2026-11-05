@@ -12,7 +12,18 @@ Interaktive MTB-Karte für den Tegernsee mit drei fiktiven Beispieltrails. Du ka
 
 ## Starten
 
-Du brauchst Java 17, Maven und eine Internetverbindung für den ersten Build, die Karte und die Wetterdaten. Führe im Projektordner aus:
+Für den Build brauchst du ein JDK 17. Für den ersten Build, die Karte und die Wetterdaten ist eine Internetverbindung erforderlich.
+
+### In Apache NetBeans
+
+1. Klone das Repository oder entpacke das ZIP-Archiv.
+2. Wähle unter Windows, macOS oder Linux **File → Open Project** und öffne den Ordner mit der [`pom.xml`](pom.xml). NetBeans erkennt ihn als Maven-Projekt.
+3. Verwende JDK 17 für das Projekt und wähle **Run → Run Project**. Die mitgelieferte [`nbactions.xml`](nbactions.xml) startet Open Liberty über das Maven-Ziel `liberty:dev`. Du kannst das in NetBeans enthaltene Maven verwenden.
+4. Öffne [http://localhost:9080](http://localhost:9080). Beende den Server über **Stop** im Ausgabefenster von NetBeans.
+
+### Im Terminal
+
+Führe mit installiertem Maven im Projektordner aus:
 
 ```sh
 mvn liberty:dev
