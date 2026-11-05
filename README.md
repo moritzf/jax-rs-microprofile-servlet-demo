@@ -1,29 +1,35 @@
 # OSM MTB Trailzustand
 
-Interaktive Karte mit drei fiktiven MTB-Trails am Tegernsee. Wähle einen Trail, sieh dir die Regenvorhersage an und melde seinen Zustand mit einer optionalen Notiz. Meldungen werden mit Zeitstempel lokal in H2 gespeichert. Kammspur und Hanglinie starten mit je drei Beispielmeldungen. Der Seeberg-Waldtrail startet ohne Meldungen.
+![App-Ansicht mit OpenStreetMap-Karte, Wettervorhersage und Zustandsmeldungen für die Kammspur](docs/app-screenshot.jpg)
+
+Interaktive MTB-Karte für den Tegernsee mit drei fiktiven Beispieltrails. Du kannst GPX-Tracks oder -Routen bis 2 MiB importieren, die stündliche Regenwahrscheinlichkeit am Trail-Einstieg abrufen und Zustände mit optionaler Notiz melden. Kammspur und Hanglinie enthalten je drei Beispielmeldungen.
+
+## Java-Technologien
+
+- **JAX-RS (Jakarta REST)** stellt Trails als GeoJSON bereit, verarbeitet GPX-Importe und verwaltet Zustandsmeldungen über die REST-API.
+- **MicroProfile** ruft mit dem Rest Client Wetterdaten von Open-Meteo ab. MicroProfile Config liefert die URL des Wetterdienstes, die Zeitlimits und den Datenbankpfad.
+- **Jakarta Servlet** liefert über das Downloadsymbol rechts neben „Zustandsmeldungen“ die bis zu 20 neuesten Meldungen des ausgewählten Trails als CSV.
 
 ## Starten
 
-Du brauchst Java 17, Maven und eine Internetverbindung für Karte und Wetter.
+Du brauchst Java 17, Maven und eine Internetverbindung für den ersten Build, die Karte und die Wetterdaten. Führe im Projektordner aus:
 
 ```sh
 mvn liberty:dev
 ```
 
-Öffne [http://localhost:9080](http://localhost:9080). Mit `q` beendest du den Entwicklungsserver.
+Öffne [http://localhost:9080](http://localhost:9080). Mit `q` beendest du den Open-Liberty-Entwicklungsserver.
 
-## GPX-Trail importieren
+## Wartung
 
-Öffne **GPX-Trail importieren**, wähle eine Datei bis 2 MiB und lege den Schwierigkeitsgrad fest. Ein eigener Name ist optional. Pro Datei wird ein Trail in H2 gespeichert. Der Import verwendet GPX-Tracks und greift bei Bedarf auf GPX-Routen zurück. Getrennte Segmente bleiben getrennt. Die Karte springt nach dem Import zum neuen Trail.
+- **Datenbank sichern.** H2 speichert importierte Trails und Zustandsmeldungen in `trails.mv.db`. Der Standardpfad `data/trails` ist relativ zum Arbeitsverzeichnis des Liberty-Servers. Beende die App, bevor du die Datenbankdatei kopierst oder aus einer Sicherung wiederherstellst.
+- **Daten außerhalb des Build-Ordners speichern.** Setze vor dem Start `export OSM_MTB_TRAILZUSTAND_DB_PATH="$PWD/data/trails"`, um die Datenbank im Projektordner zu speichern. Eine vorhandene Datenbank kannst du bei gestopptem Server an diesen Pfad kopieren.
+- **Konfiguration ändern.** Port und Liberty-Features stehen in [server.xml](src/main/liberty/config/server.xml). Wetterdienst und Zeitlimits stehen in [microprofile-config.properties](src/main/resources/META-INF/microprofile-config.properties).
+- **Build und Fehlersuche.** `mvn package` erstellt `target/osm-mtb-trailzustand.war`. Servermeldungen findest du in `target/liberty/wlp/usr/servers/defaultServer/logs/messages.log`.
+- **Tests ausführen.** `mvn test` prüft GPX-Import, Datenbank, Wetterverarbeitung und CSV-Export. Die Tests verwenden temporäre Datenbanken und benötigen keinen laufenden Server.
+- **Beispieltrails pflegen.** Die vorinstallierten Strecken stehen in [trails.geojson](src/main/resources/trails.geojson). Änderungen am Katalog erfordern einen Neustart oder eine erneute Bereitstellung.
 
-## Technik
-
-- **Frontend:** Bootstrap, Leaflet und OpenStreetMap.
-- **Backend:** Java mit JAX-RS auf Open Liberty. Der MicroProfile Rest Client ruft Wetterdaten von Open-Meteo ab.
-- **CSV-Download:** Ein Jakarta Servlet exportiert die bis zu 20 neuesten Meldungen des gewählten Trails inklusive Notizen. Das Downloadsymbol steht rechts neben „Zustandsmeldungen“.
-- **Daten:** Die Beispieltrails stehen in `src/main/resources/trails.geojson`.
-
-## REST-API
+### HTTP-Endpunkte
 
 | Methode und Pfad | Funktion |
 | --- | --- |
@@ -34,3 +40,9 @@ mvn liberty:dev
 | `GET /api/trails/kammspur/reports` | Zustandsmeldungen abrufen |
 | `POST /api/trails/kammspur/reports` | Zustand melden, zum Beispiel `{"condition":"muddy","note":"Matsch in der letzten Kurve."}` |
 | `GET /exports/reports.csv?trail=kammspur` | Meldungen als CSV herunterladen |
+
+## Lizenz
+
+Der Quellcode steht unter der GNU General Public License, Version 3 (`GPL-3.0-only`). Der vollständige Lizenztext steht in [LICENSE](LICENSE).
+
+Die Kartendaten stammen von © OpenStreetMap contributors und stehen unter der Open Database License (ODbL). [OpenStreetMap-Lizenzhinweise](https://www.openstreetmap.org/copyright)
