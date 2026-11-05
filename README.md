@@ -20,7 +20,7 @@ mvn liberty:dev
 
 - **Frontend:** Bootstrap, Leaflet und OpenStreetMap.
 - **Backend:** Java mit JAX-RS auf Open Liberty. Der MicroProfile Rest Client ruft Wetterdaten von Open-Meteo ab.
-- **CSV-Download:** Ein Jakarta Servlet exportiert die bis zu 20 neuesten Meldungen des gewählten Trails inklusive Notizen. Den Download findest du unter der Meldungsliste.
+- **CSV-Download:** Ein Jakarta Servlet exportiert die bis zu 20 neuesten Meldungen des gewählten Trails inklusive Notizen. Das Downloadsymbol steht rechts neben „Zustandsmeldungen“.
 - **Daten:** Die Beispieltrails stehen in `src/main/resources/trails.geojson`.
 
 ## REST-API

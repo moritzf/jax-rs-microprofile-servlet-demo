@@ -83,9 +83,17 @@
                     <section class="border-top mt-3 pt-3">
                         <p id="reports-status" class="small text-body-secondary" role="status"></p>
                         <div id="report-history" class="mb-3" hidden>
-                            <h3 class="h6">Zustandsmeldungen</h3>
+                            <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
+                                <h3 class="h6 mb-0">Zustandsmeldungen</h3>
+                                <a id="reports-export" class="btn btn-sm btn-link link-secondary p-2 lh-1"
+                                   title="Meldungen als CSV herunterladen" aria-label="Meldungen als CSV herunterladen">
+                                    <svg class="d-block" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 3v12m-4-4 4 4 4-4M5 16v5h14v-5"/>
+                                    </svg>
+                                </a>
+                            </div>
                             <ul id="reports" class="list-group overflow-auto"></ul>
-                            <a id="reports-export" class="btn btn-outline-secondary btn-sm mt-2">Meldungen als CSV herunterladen</a>
                         </div>
                         <form id="report-form">
                             <label for="condition" class="form-label fw-semibold">Zustand melden</label>
