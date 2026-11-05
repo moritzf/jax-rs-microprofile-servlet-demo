@@ -1,8 +1,8 @@
 # OSM MTB Trailzustand
 
-**[Live-Demo öffnen](https://mtbtrailzustand.dpdns.org/)**
-
 ![App-Ansicht mit OpenStreetMap-Karte, Wettervorhersage und Zustandsmeldungen für die Kammspur](docs/app-screenshot.jpg)
+
+**[Live-Demo öffnen](https://mtbtrailzustand.dpdns.org/)**
 
 Interaktive MTB-Karte für den Tegernsee mit drei fiktiven Beispieltrails. Es können die stündliche Regenwahrscheinlichkeit am Trail-Einstieg abgerufen und Zustände mit optionaler Notiz gemeldet werden. Ebenfalls ist ein GPX-Import von Trails möglich. Der GPX-Import befindet sich ganz unten in der Seitenleiste.
 
