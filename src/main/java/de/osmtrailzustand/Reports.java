@@ -35,11 +35,11 @@ public class Reports {
                     """);
             statement.executeUpdate("""
                     MERGE INTO reports AS target USING (VALUES
-                        (UUID '00000000-0000-4000-8000-000000000001', 'waldrunde', 'dry',
+                        (UUID '00000000-0000-4000-8000-000000000001', 'hanglinie', 'dry',
                          'Beispielmeldung: Der Waldboden ist trocken.', CURRENT_TIMESTAMP - INTERVAL '3' HOUR),
-                        (UUID '00000000-0000-4000-8000-000000000002', 'waldrunde', 'damp',
+                        (UUID '00000000-0000-4000-8000-000000000002', 'hanglinie', 'damp',
                          'Beispielmeldung: Wurzeln im Schatten noch feucht.', CURRENT_TIMESTAMP - INTERVAL '1' DAY),
-                        (UUID '00000000-0000-4000-8000-000000000003', 'waldrunde', 'muddy',
+                        (UUID '00000000-0000-4000-8000-000000000003', 'hanglinie', 'muddy',
                          'Beispielmeldung: Matsch in der letzten Kurve.', CURRENT_TIMESTAMP - INTERVAL '3' DAY),
                         (UUID '00000000-0000-4000-8000-000000000004', 'kammspur', 'damp',
                          'Beispielmeldung: Der Einstieg ist feucht.', CURRENT_TIMESTAMP - INTERVAL '5' HOUR),
@@ -49,6 +49,8 @@ public class Reports {
                          'Beispielmeldung: Der gesamte Trail ist trocken.', CURRENT_TIMESTAMP - INTERVAL '4' DAY)
                     ) AS seed(id, trail_id, condition, note, reported_at)
                     ON target.id = seed.id
+                    WHEN MATCHED AND target.trail_id <> seed.trail_id THEN
+                        UPDATE SET trail_id = seed.trail_id
                     WHEN NOT MATCHED THEN
                         INSERT (id, trail_id, condition, note, reported_at)
                         VALUES (seed.id, seed.trail_id, seed.condition, seed.note, seed.reported_at)

@@ -1,6 +1,6 @@
 # OSM MTB Trailzustand
 
-Interaktive Karte mit drei fiktiven MTB-Trails am Tegernsee. Wähle einen Trail, sieh dir die Regenvorhersage an und melde seinen Zustand mit einer optionalen Notiz. Meldungen werden mit Zeitstempel lokal in H2 gespeichert. Seeberg-Waldtrail und Kammspur starten mit je drei Beispielmeldungen.
+Interaktive Karte mit drei fiktiven MTB-Trails am Tegernsee. Wähle einen Trail, sieh dir die Regenvorhersage an und melde seinen Zustand mit einer optionalen Notiz. Meldungen werden mit Zeitstempel lokal in H2 gespeichert. Kammspur und Hanglinie starten mit je drei Beispielmeldungen. Der Seeberg-Waldtrail startet ohne Meldungen.
 
 ## Starten
 
