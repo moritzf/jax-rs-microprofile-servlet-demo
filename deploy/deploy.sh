@@ -40,7 +40,9 @@ if [[ "$candidate" != "$current" ]]; then
     echo "Deploying $candidate"
     if APP_IMAGE="$candidate" docker compose up -d --no-deps --pull never app &&
         curl --fail --silent --show-error --output /dev/null --retry 30 --retry-delay 2 \
-            --retry-all-errors --max-time 5 http://127.0.0.1:9080/api/trails/kammspur/reports; then
+            --retry-all-errors --max-time 5 http://127.0.0.1:9080/api/trails/kammspur/reports &&
+        curl --fail --silent --show-error --max-time 5 http://127.0.0.1:9080/api/trails/settings |
+            grep -E '"demoMode"[[:space:]]*:[[:space:]]*true' >/dev/null; then
         printf '%s\n' "$candidate" > state/current.tmp
         mv -f state/current.tmp state/current
         rm -f state/rejected

@@ -34,9 +34,18 @@ jobs:
             --cap-drop ALL --security-opt no-new-privileges \
             --publish 127.0.0.1:9080:9080 \
             --mount "type=bind,source=$RUNNER_TEMP/trail-data,target=/data" \
-            --env OSM_MTB_TRAILZUSTAND_DB_PATH=/data/trails trailzustand:smoke
+            --env OSM_MTB_TRAILZUSTAND_DB_PATH=/data/trails \
+            --env OSM_MTB_TRAILZUSTAND_DEMO_MODE=true trailzustand:smoke
           curl --fail --silent --show-error --retry 30 --retry-delay 2 \
             --retry-all-errors --max-time 5 http://127.0.0.1:9080/api/trails/kammspur/reports
+          curl --fail --silent --show-error http://127.0.0.1:9080/api/trails/settings \
+            | jq -e '.demoMode == true'
+          test "$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --header 'Content-Type: application/gpx+xml' --data-binary '<invalid/>' \
+            'http://127.0.0.1:9080/api/trails?name=Smoke&difficulty=Mittel')" = 403
+          test "$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --header 'Content-Type: application/json' --data-binary '{}' \
+            http://127.0.0.1:9080/api/trails/kammspur/reports)" = 403
           sudo test -f "$RUNNER_TEMP/trail-data/trails.mv.db"
 
       - name: Show smoke test logs

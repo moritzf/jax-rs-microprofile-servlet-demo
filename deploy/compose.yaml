@@ -11,6 +11,7 @@ services:
     stop_grace_period: 40s
     environment:
       OSM_MTB_TRAILZUSTAND_DB_PATH: /data/trails
+      OSM_MTB_TRAILZUSTAND_DEMO_MODE: "true"
     ports:
       - "127.0.0.1:9080:9080"
     volumes:

@@ -24,6 +24,18 @@ async function request(path, options = {}) {
     return response.json();
 }
 
+async function loadSettings() {
+    try {
+        const { demoMode } = await request("/settings", { cache: "no-store" });
+        byId("demo-notice").hidden = demoMode !== true;
+        byId("report-form").hidden = demoMode !== false;
+        byId("import-panel").hidden = demoMode !== false;
+    } catch {
+        byId("demo-notice").textContent = "GPX-Uploads und neue Zustandsmeldungen sind derzeit nicht verfügbar.";
+        byId("demo-notice").hidden = false;
+    }
+}
+
 function trailStyle(feature) {
     return {
         color: colors[feature.properties.difficulty],
@@ -246,6 +258,7 @@ function startMap() {
     void updateMap();
 }
 
+void loadSettings();
 if (typeof L === "undefined") {
     byId("map-status").textContent = "Die Kartenbibliothek konnte nicht geladen werden.";
 } else {

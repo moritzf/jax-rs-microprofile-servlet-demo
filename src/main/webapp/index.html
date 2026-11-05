@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="styles.css">
     <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script defer src="app.js"></script>
+    <script defer src="app.js?v=2"></script>
 </head>
 <body class="bg-body-tertiary">
 <header class="navbar bg-success text-white">
@@ -40,6 +40,10 @@
             </div>
         </section>
         <aside class="col-lg-4 p-3 p-xl-4">
+            <div id="demo-notice" class="alert alert-info" role="status" hidden>
+                <strong>Demo-Modus</strong><br>
+                GPX-Uploads und neue Zustandsmeldungen sind deaktiviert.
+            </div>
             <h2 class="h5">Trails im Kartenausschnitt</h2>
             <p class="small text-body-secondary mb-2">Die drei vorinstallierten Strecken sind fiktive Beispiele.</p>
             <p id="map-status" class="small text-body-secondary" role="status">Trails werden geladen …</p>
@@ -75,7 +79,7 @@
                             </div>
                             <ul id="reports" class="list-group overflow-auto"></ul>
                         </div>
-                        <form id="report-form">
+                        <form id="report-form" hidden>
                             <label for="condition" class="form-label fw-semibold">Zustand melden</label>
                             <select id="condition" class="form-select mb-2" name="condition" required>
                                 <option value="">Zustand wählen</option>
@@ -94,7 +98,7 @@
                     </section>
                 </div>
             </section>
-            <details class="border rounded bg-body p-2 mt-3">
+            <details id="import-panel" class="border rounded bg-body p-2 mt-3" hidden>
                 <summary class="fw-semibold">GPX-Trail importieren</summary>
                 <form id="import-form" class="mt-2">
                     <label for="gpx-file" class="form-label">GPX-Datei</label>

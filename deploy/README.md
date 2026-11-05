@@ -3,8 +3,8 @@
 GitHub Actions baut das Image, testet den Container mit der H2-Datenbank
 und veröffentlicht `production` und einen Tag mit dem Git-Commit in GHCR.
 Die VM prüft alle zwei Minuten auf neue Images und startet sie per Digest.
-Sie übernimmt die Version erst nach einem erfolgreichen Abruf der
-Meldungs-API und startet bei einem Fehler wieder das vorherige Image.
+Sie übernimmt die Version erst, wenn die Meldungs-API erreichbar und der
+Demo-Modus aktiv ist. Bei einem Fehler startet sie wieder das vorherige Image.
 Beim Austausch des einzelnen App-Containers entsteht eine kurze Unterbrechung.
 
 ## Einmalige Einrichtung
@@ -30,9 +30,10 @@ Beim Austausch des einzelnen App-Containers entsteht eine kurze Unterbrechung.
 3. **Cloudflare.** Lege einen remote verwalteten Tunnel an und füge eine
    öffentliche Hostname-Route vom gewünschten Hostnamen auf
    `http://app:9080` hinzu. Der Name `app` wird im Compose-Netz aufgelöst.
+   Die Compose-Datei aktiviert den Demo-Modus. Die App zeigt bestehende
+   Trails und Meldungen an und lehnt GPX-Importe und neue Meldungen ab.
    Falls nur eingeladene Personen Zugriff erhalten sollen, richte vor der
-   Freigabe eine Cloudflare-Access-Richtlinie für den Hostnamen ein. Ohne
-   Access sind auch GPX-Importe und Meldungen öffentlich möglich.
+   Freigabe eine Cloudflare-Access-Richtlinie für den Hostnamen ein.
 4. **VM.** Übertrage diesen Ordner aus einem geprüften Checkout auf die VM.
    Führe im übertragenen Ordner aus:
 
