@@ -1,0 +1,23 @@
+.map-panel {
+    position: relative;
+    height: clamp(17rem, 48dvh, 30rem);
+    isolation: isolate;
+}
+
+#map { background: #e1e9dc; }
+#map .trail-hitbox { pointer-events: stroke; }
+#reset-map, .map-legend { z-index: 500; }
+.map-legend { bottom: 1.5rem; }
+.map-legend span { display: inline-flex; align-items: center; gap: .3rem; }
+.map-legend i { width: .75rem; height: .2rem; border-radius: .25rem; }
+.easy { background: #207c4b; }
+.medium { background: #155dae; }
+.hard { background: #ae3d30; }
+
+#reports { max-height: 13rem; }
+.card[hidden] { display: none; }
+[role="status"]:empty { margin-bottom: 0; }
+
+@media (min-width: 992px) {
+    .map-panel { position: sticky; top: 0; height: calc(100dvh - 3.7rem); }
+}
