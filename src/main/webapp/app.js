@@ -116,6 +116,7 @@ function selectTrail(feature, trailsLayer) {
     byId("trail-description").textContent = feature.properties.description;
     byId("forecast").replaceChildren();
     byId("report-history").hidden = true;
+    byId("reports-export").href = `exports/reports.csv?trail=${encodeURIComponent(selectedId)}`;
     byId("reports").replaceChildren();
     byId("report-form").reset();
     byId("form-status").textContent = "";
