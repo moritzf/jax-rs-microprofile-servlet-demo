@@ -204,7 +204,7 @@ function startMap() {
             });
             byId("trails").replaceChildren(...items);
             renderSelection(trailsLayer);
-            byId("map-status").textContent = items.length ? "" : "In diesem Ausschnitt liegen keine Beispieltrails.";
+            byId("map-status").textContent = items.length ? "" : "In diesem Ausschnitt liegen keine Trails.";
         } catch {
             if (!signal.aborted) byId("map-status").textContent = "Trails konnten nicht geladen werden.";
         }
@@ -212,6 +212,37 @@ function startMap() {
 
     map.on("moveend", updateMap);
     byId("reset-map").addEventListener("click", () => map.fitBounds(region));
+    byId("import-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const submit = byId("submit-import");
+        if (submit.disabled) return;
+        const fields = new FormData(form);
+        const file = fields.get("gpx");
+        const status = byId("import-status");
+        if (file.size > 2 * 1024 * 1024) {
+            status.textContent = "Die GPX-Datei darf höchstens 2 MiB groß sein.";
+            return;
+        }
+        const params = new URLSearchParams({ name: fields.get("name"), difficulty: fields.get("difficulty") });
+        submit.disabled = true;
+        status.textContent = "Trail wird importiert …";
+        try {
+            const trail = await request(`?${params}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/gpx+xml" },
+                body: file
+            });
+            map.fitBounds(L.geoJSON(trail).getBounds(), { padding: [20, 20], maxZoom: 16, animate: false });
+            selectTrail(trail, trailsLayer);
+            form.reset();
+            status.textContent = "Trail importiert.";
+        } catch (error) {
+            status.textContent = error.message;
+        } finally {
+            submit.disabled = false;
+        }
+    });
     void updateMap();
 }
 
