@@ -41,6 +41,26 @@ public class Reports {
             statement.executeUpdate("""
                     CREATE INDEX IF NOT EXISTS reports_by_trail ON reports (trail_id, reported_at DESC, id)
                     """);
+            statement.executeUpdate("""
+                    MERGE INTO reports AS target USING (VALUES
+                        (UUID '00000000-0000-4000-8000-000000000001', 'waldrunde', 'dry',
+                         'Beispielmeldung: Der Waldboden ist trocken.', CURRENT_TIMESTAMP - INTERVAL '3' HOUR),
+                        (UUID '00000000-0000-4000-8000-000000000002', 'waldrunde', 'damp',
+                         'Beispielmeldung: Wurzeln im Schatten noch feucht.', CURRENT_TIMESTAMP - INTERVAL '1' DAY),
+                        (UUID '00000000-0000-4000-8000-000000000003', 'waldrunde', 'muddy',
+                         'Beispielmeldung: Matsch in der letzten Kurve.', CURRENT_TIMESTAMP - INTERVAL '3' DAY),
+                        (UUID '00000000-0000-4000-8000-000000000004', 'kammspur', 'damp',
+                         'Beispielmeldung: Der Einstieg ist feucht.', CURRENT_TIMESTAMP - INTERVAL '5' HOUR),
+                        (UUID '00000000-0000-4000-8000-000000000005', 'kammspur', 'obstacle',
+                         'Beispielmeldung: Ein Ast liegt in der zweiten Kurve.', CURRENT_TIMESTAMP - INTERVAL '2' DAY),
+                        (UUID '00000000-0000-4000-8000-000000000006', 'kammspur', 'dry',
+                         'Beispielmeldung: Der gesamte Trail ist trocken.', CURRENT_TIMESTAMP - INTERVAL '4' DAY)
+                    ) AS seed(id, trail_id, condition, note, reported_at)
+                    ON target.id = seed.id
+                    WHEN NOT MATCHED THEN
+                        INSERT (id, trail_id, condition, note, reported_at)
+                        VALUES (seed.id, seed.trail_id, seed.condition, seed.note, seed.reported_at)
+                    """);
         } catch (SQLException e) {
             throw new IllegalStateException("Datenbank konnte nicht initialisiert werden.", e);
         }
