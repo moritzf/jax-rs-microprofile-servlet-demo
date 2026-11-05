@@ -1,0 +1,8 @@
+<server description="OSM MTB Trailzustand">
+    <featureManager>
+        <feature>microProfile-7.0</feature>
+    </featureManager>
+    <ssl id="defaultSSLConfig" trustDefaultCerts="true" />
+    <httpEndpoint id="defaultHttpEndpoint" host="localhost" httpPort="9080" httpsPort="-1" />
+    <webApplication location="osm-mtb-trailzustand.war" contextRoot="/" />
+</server>
