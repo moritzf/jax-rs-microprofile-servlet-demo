@@ -4,7 +4,7 @@
 
 ![App-Ansicht mit OpenStreetMap-Karte, Wettervorhersage und Zustandsmeldungen für die Kammspur](docs/app-screenshot.jpg)
 
-Interaktive MTB-Karte für den Tegernsee mit drei fiktiven Beispieltrails. Du kannst GPX-Tracks oder -Routen bis 2 MiB importieren, die stündliche Regenwahrscheinlichkeit am Trail-Einstieg abrufen und Zustände mit optionaler Notiz melden. Den GPX-Import findest du ganz unten in der Seitenleiste. Dafür gibst du einen Trailnamen an. Kammspur und Hanglinie enthalten je drei Beispielmeldungen.
+Interaktive MTB-Karte für den Tegernsee mit drei fiktiven Beispieltrails. Es können die stündliche Regenwahrscheinlichkeit am Trail-Einstieg abgerufen und Zustände mit optionaler Notiz gemeldet werden. Ebenfalls ist ein GPX-Import von Trails möglich. Der GPX-Import befindet sich ganz unten in der Seitenleiste.
 
 ## Java-Technologien
 
@@ -14,7 +14,7 @@ Interaktive MTB-Karte für den Tegernsee mit drei fiktiven Beispieltrails. Du ka
 
 ## Starten
 
-Für den Build brauchst du ein JDK 17. Für den ersten Build, die Karte und die Wetterdaten ist eine Internetverbindung erforderlich.
+Für den Build wird das JDK 17 benötigt.
 
 ### In Apache NetBeans
 
@@ -73,4 +73,4 @@ siehe [Deployment auf OCI mit Cloudflare Tunnel](deploy/README.md).
 
 Der Quellcode steht unter der GNU General Public License, Version 3 (`GPL-3.0-only`). Der vollständige Lizenztext steht in [LICENSE](LICENSE).
 
-Die Kartendaten stammen von © OpenStreetMap contributors und stehen unter der Open Database License (ODbL). [OpenStreetMap-Lizenzhinweise](https://www.openstreetmap.org/copyright)
+Die Kartendaten stammen von © OpenStreetMap und stehen unter der Open Database License (ODbL). [OpenStreetMap-Lizenzhinweise](https://www.openstreetmap.org/copyright)
