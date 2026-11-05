@@ -1,0 +1,127 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "waldrunde",
+      "properties": {
+        "name": "Seeberg-Waldtrail",
+        "difficulty": "Leicht",
+        "description": "Fiktiver Waldtrail nordöstlich des Tegernsees."
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            11.7774,
+            47.7306
+          ],
+          [
+            11.7787,
+            47.7309
+          ],
+          [
+            11.7803,
+            47.7304
+          ],
+          [
+            11.7811,
+            47.7294
+          ],
+          [
+            11.7822,
+            47.7291
+          ],
+          [
+            11.7836,
+            47.7283
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "kammspur",
+      "properties": {
+        "name": "Kammspur",
+        "difficulty": "Mittel",
+        "description": "Fiktive Strecke mit engen Kurven östlich des Tegernsees."
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            11.7891,
+            47.718
+          ],
+          [
+            11.7879,
+            47.7178
+          ],
+          [
+            11.7871,
+            47.7171
+          ],
+          [
+            11.7857,
+            47.7174
+          ],
+          [
+            11.785,
+            47.7166
+          ],
+          [
+            11.7835,
+            47.7161
+          ],
+          [
+            11.7827,
+            47.7154
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hanglinie",
+      "properties": {
+        "name": "Hanglinie",
+        "difficulty": "Schwer",
+        "description": "Fiktive Strecke am Hang südöstlich des Tegernsees."
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            11.7916,
+            47.7005
+          ],
+          [
+            11.7903,
+            47.7008
+          ],
+          [
+            11.789,
+            47.7003
+          ],
+          [
+            11.7886,
+            47.6993
+          ],
+          [
+            11.7871,
+            47.6996
+          ],
+          [
+            11.7862,
+            47.6989
+          ],
+          [
+            11.7846,
+            47.6987
+          ]
+        ]
+      }
+    }
+  ]
+}
