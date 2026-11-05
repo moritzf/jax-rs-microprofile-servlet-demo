@@ -46,8 +46,6 @@ Das Image enthält Open Liberty und die WAR-Datei. Beim Build läuft `mvn verify
 Die lokale Vorschau speichert Daten im Container. Für den dauerhaften Betrieb
 siehe [Deployment auf OCI mit Cloudflare Tunnel](deploy/README.md).
 
-- [ ] **TODO für Projektadministratoren** – CI/CD mit GitHub Actions für das automatische Deployment auf den Demo-Server einrichten.
-
 ## Wartung
 
 - **Datenbank sichern.** H2 speichert importierte Trails und Zustandsmeldungen in `trails.mv.db`. Der Standardpfad `data/trails` ist relativ zum Arbeitsverzeichnis des Liberty-Servers. Beende die App, bevor du die Datenbankdatei kopierst oder aus einer Sicherung wiederherstellst.
