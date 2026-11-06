@@ -13,6 +13,8 @@ let selectedId;
 let mapRequest;
 let detailRequest;
 let reportsRequest;
+let storedReports = [];
+const demoReports = new Map();
 const pendingReports = new Set();
 
 async function request(path, options = {}) {
@@ -28,7 +30,7 @@ async function loadSettings() {
     try {
         const { demoMode } = await request("/settings", { cache: "no-store" });
         byId("demo-notice").hidden = demoMode !== true;
-        byId("report-form").hidden = demoMode !== false;
+        byId("report-form").hidden = typeof demoMode !== "boolean";
         byId("import-panel").hidden = demoMode !== false;
     } catch {
         byId("demo-notice").textContent = "GPX-Uploads und neue Zustandsmeldungen sind derzeit nicht verfügbar.";
@@ -75,6 +77,13 @@ function showReport(report) {
     return item;
 }
 
+function renderReports() {
+    const reports = [...(demoReports.get(selectedId) ?? []), ...storedReports].slice(0, 20);
+    byId("reports").replaceChildren(...reports.map(showReport));
+    byId("report-history").hidden = reports.length === 0;
+    byId("reports-export").hidden = storedReports.length === 0;
+}
+
 async function loadReports(id) {
     reportsRequest?.abort();
     reportsRequest = new AbortController();
@@ -83,8 +92,8 @@ async function loadReports(id) {
     try {
         const reports = await request(`/${id}/reports`, { signal });
         if (signal.aborted) return;
-        byId("reports").replaceChildren(...reports.map(showReport));
-        byId("report-history").hidden = reports.length === 0;
+        storedReports = reports;
+        renderReports();
         byId("reports-status").textContent = "";
     } catch {
         if (!signal.aborted) byId("reports-status").textContent = "Meldungen konnten nicht geladen werden.";
@@ -127,9 +136,9 @@ function selectTrail(feature, trailsLayer, map) {
     byId("trail-difficulty").textContent = feature.properties.difficulty;
     byId("trail-description").textContent = feature.properties.description;
     byId("forecast").replaceChildren();
-    byId("report-history").hidden = true;
     byId("reports-export").href = `exports/reports.csv?trail=${encodeURIComponent(selectedId)}`;
-    byId("reports").replaceChildren();
+    storedReports = [];
+    renderReports();
     byId("report-form").reset();
     byId("form-status").textContent = "";
     byId("submit-report").disabled = pendingReports.has(selectedId);
@@ -151,16 +160,25 @@ byId("report-form").addEventListener("submit", async (event) => {
     byId("submit-report").disabled = true;
     byId("form-status").textContent = "Meldung wird gespeichert …";
     try {
-        await request(`/${id}/reports`, {
+        const report = await request(`/${id}/reports`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(Object.fromEntries(new FormData(form)))
         });
+        const isDemoReport = report.persisted === false;
+        if (isDemoReport) {
+            demoReports.set(id, [report, ...(demoReports.get(id) ?? [])].slice(0, 20));
+        }
         if (view === detailRequest) {
             form.reset();
-            byId("form-status").textContent = "Meldung gespeichert.";
+            byId("form-status").textContent = isDemoReport
+                ? "Meldung für diese Seite hinzugefügt."
+                : "Meldung gespeichert.";
         }
-        if (id === selectedId) void loadReports(id);
+        if (id === selectedId) {
+            if (isDemoReport) renderReports();
+            else void loadReports(id);
+        }
     } catch (error) {
         if (view === detailRequest) byId("form-status").textContent = error.message;
     } finally {
@@ -169,8 +187,8 @@ byId("report-form").addEventListener("submit", async (event) => {
     }
 });
 
-function startMap() {
-    const map = L.map("map", { minZoom: 3, maxZoom: 19 }).fitBounds(region);
+function startMap(container) {
+    const map = L.map(container, { minZoom: 3, maxZoom: 19, trackResize: false }).fitBounds(region);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
@@ -256,11 +274,22 @@ function startMap() {
         }
     });
     void updateMap();
+    return map;
 }
 
 void loadSettings();
 if (typeof L === "undefined") {
     byId("map-status").textContent = "Die Kartenbibliothek konnte nicht geladen werden.";
 } else {
-    startMap();
+    const container = byId("map");
+    let map;
+    // Fit the initial region after layout has sized the map panel.
+    new ResizeObserver(([{ contentRect }]) => {
+        if (!contentRect.width || !contentRect.height) return;
+        if (map) {
+            map.invalidateSize({ debounceMoveend: true });
+        } else {
+            map = startMap(container);
+        }
+    }).observe(container);
 }

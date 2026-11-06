@@ -36,8 +36,9 @@ jobs:
             --mount "type=bind,source=$RUNNER_TEMP/trail-data,target=/data" \
             --env OSM_MTB_TRAILZUSTAND_DB_PATH=/data/trails \
             --env OSM_MTB_TRAILZUSTAND_DEMO_MODE=true trailzustand:smoke
-          curl --fail --silent --show-error --retry 30 --retry-delay 2 \
-            --retry-all-errors --max-time 5 http://127.0.0.1:9080/api/trails/kammspur/reports
+          reports_url=http://127.0.0.1:9080/api/trails/kammspur/reports
+          reports_before=$(curl --fail --silent --show-error --retry 30 --retry-delay 2 \
+            --retry-all-errors --max-time 5 "$reports_url")
           curl --fail --silent --show-error http://127.0.0.1:9080/api/trails/settings \
             | jq -e '.demoMode == true'
           test "$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
@@ -45,7 +46,11 @@ jobs:
             'http://127.0.0.1:9080/api/trails?name=Smoke&difficulty=Mittel')" = 403
           test "$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
             --header 'Content-Type: application/json' --data-binary '{}' \
-            http://127.0.0.1:9080/api/trails/kammspur/reports)" = 403
+            "$reports_url")" = 400
+          curl --fail --silent --show-error --header 'Content-Type: application/json' \
+            --data-binary '{"condition":"dry","note":"Demo smoke test"}' "$reports_url" \
+            | jq -e '.persisted == false and .condition == "dry" and .note == "Demo smoke test"'
+          test "$(curl --fail --silent --show-error "$reports_url")" = "$reports_before"
           sudo test -f "$RUNNER_TEMP/trail-data/trails.mv.db"
 
       - name: Show smoke test logs

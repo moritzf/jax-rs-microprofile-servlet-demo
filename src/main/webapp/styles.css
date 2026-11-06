@@ -1,10 +1,15 @@
 .map-panel {
     position: relative;
+    height: clamp(17rem, 48vh, 30rem);
     height: clamp(17rem, 48dvh, 30rem);
     isolation: isolate;
 }
 
-#map { background: #e1e9dc; }
+#map {
+    position: absolute;
+    inset: 0;
+    background: #e1e9dc;
+}
 #map .trail-hitbox { pointer-events: stroke; }
 #reset-map, .map-legend { z-index: 500; }
 .map-legend { bottom: 1.5rem; }
@@ -20,5 +25,10 @@
 [role="status"]:empty { margin-bottom: 0; }
 
 @media (min-width: 992px) {
-    .map-panel { position: sticky; top: 0; height: calc(100dvh - 3.7rem); }
+    .map-panel {
+        position: sticky;
+        top: 0;
+        height: calc(100vh - 3.7rem);
+        height: calc(100dvh - 3.7rem);
+    }
 }

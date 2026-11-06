@@ -8,10 +8,10 @@
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=3">
     <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script defer src="app.js?v=2"></script>
+    <script defer src="app.js?v=4"></script>
 </head>
 <body class="bg-body-tertiary">
 <header class="navbar bg-success text-white">
@@ -29,7 +29,7 @@
 <main class="container-fluid">
     <div class="row g-0">
         <section class="col-lg-8 map-panel" aria-label="Trailkarte">
-            <div id="map" class="h-100" aria-label="OpenStreetMap mit MTB-Trails"></div>
+            <div id="map" aria-label="OpenStreetMap mit MTB-Trails"></div>
             <button id="reset-map" class="btn btn-light btn-sm border shadow-sm position-absolute top-0 end-0 m-3"
                     type="button">Beispielregion anzeigen</button>
             <div class="map-legend position-absolute start-0 ms-3 bg-white border rounded shadow-sm px-2 py-1 small d-flex gap-2"
@@ -42,7 +42,7 @@
         <aside class="col-lg-4 p-3 p-xl-4">
             <div id="demo-notice" class="alert alert-info" role="status" hidden>
                 <strong>Demo-Modus</strong><br>
-                GPX-Uploads und neue Zustandsmeldungen sind deaktiviert.
+                GPX-Uploads sind deaktiviert. Neue Zustandsmeldungen sind bis zum Neuladen dieser Seite sichtbar.
             </div>
             <h2 class="h5">Trails im Kartenausschnitt</h2>
             <p class="small text-body-secondary mb-2">Die drei vorinstallierten Strecken sind fiktive Beispiele.</p>

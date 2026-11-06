@@ -68,7 +68,9 @@ public class TrailResource {
     public Response importTrail(InputStream input, @QueryParam("name") String name,
                                 @QueryParam("difficulty") String difficulty, @Context UriInfo uri)
             throws IOException, SQLException {
-        requireWritable();
+        if (demoMode) {
+            throw error(403, "Im Demo-Modus sind GPX-Uploads deaktiviert.");
+        }
         if (difficulty == null || !DIFFICULTIES.contains(difficulty)) {
             throw error(400, "Bitte einen gültigen Schwierigkeitsgrad angeben.");
         }
@@ -116,7 +118,6 @@ public class TrailResource {
     @Consumes("application/json")
     public Response addReport(@PathParam("id") String id, JsonObject request, @Context UriInfo uri)
             throws SQLException {
-        requireWritable();
         requireTrail(id);
         if (request == null || !(request.get("condition") instanceof JsonString condition)
                 || !CONDITIONS.contains(condition.getString())) {
@@ -129,6 +130,14 @@ public class TrailResource {
         var note = request.getString("note", "").strip();
         if (note.length() > 280) {
             throw error(400, "Die Notiz darf höchstens 280 Zeichen lang sein.");
+        }
+        if (demoMode) {
+            return Response.ok(Json.createObjectBuilder()
+                    .add("condition", condition.getString())
+                    .add("note", note)
+                    .add("reportedAt", Instant.now().toString())
+                    .add("persisted", false)
+                    .build()).build();
         }
         var report = reports.add(id, condition.getString(), note);
         return Response.created(uri.getAbsolutePathBuilder().path(report.getString("id")).build())
@@ -166,12 +175,6 @@ public class TrailResource {
             throw error(503, "Wetter vorübergehend nicht verfügbar.");
         }
         return Json.createObjectBuilder().add("hours", result).build();
-    }
-
-    private void requireWritable() {
-        if (demoMode) {
-            throw error(403, "Im Demo-Modus sind GPX-Uploads und neue Zustandsmeldungen deaktiviert.");
-        }
     }
 
     private JsonObject requireTrail(String id) throws SQLException {

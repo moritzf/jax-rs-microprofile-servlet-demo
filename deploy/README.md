@@ -31,7 +31,8 @@ Beim Austausch des einzelnen App-Containers entsteht eine kurze Unterbrechung.
    öffentliche Hostname-Route vom gewünschten Hostnamen auf
    `http://app:9080` hinzu. Der Name `app` wird im Compose-Netz aufgelöst.
    Die Compose-Datei aktiviert den Demo-Modus. Die App zeigt bestehende
-   Trails und Meldungen an und lehnt GPX-Importe und neue Meldungen ab.
+   Trails und Meldungen an und lehnt GPX-Importe ab. Neue Meldungen sind bis zum
+   Neuladen im aktuellen Tab sichtbar und werden weder gespeichert noch exportiert.
    Falls nur eingeladene Personen Zugriff erhalten sollen, richte vor der
    Freigabe eine Cloudflare-Access-Richtlinie für den Hostnamen ein.
 4. **VM.** Übertrage diesen Ordner aus einem geprüften Checkout auf die VM.
