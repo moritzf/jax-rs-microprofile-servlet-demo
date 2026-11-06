@@ -32,10 +32,14 @@
 }
 
 @media (min-width: 992px) {
+    body:has(#demo-notice:not([hidden])) {
+        --demo-banner-height: calc(2.5rem + 2px);
+    }
+
     .map-panel {
         position: sticky;
         top: 0;
-        height: calc(100vh - 3.7rem);
-        height: calc(100dvh - 3.7rem);
+        height: calc(100vh - 3.7rem - var(--demo-banner-height, 0px));
+        height: calc(100dvh - 3.7rem - var(--demo-banner-height, 0px));
     }
 }

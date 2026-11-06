@@ -8,7 +8,7 @@
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-    <link rel="stylesheet" href="styles.css?v=4">
+    <link rel="stylesheet" href="styles.css?v=5">
     <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script defer src="app.js?v=5"></script>
@@ -26,6 +26,10 @@
         <span class="small">Tegernsee, Bayern</span>
     </div>
 </header>
+<div id="demo-notice" class="alert alert-info rounded-0 mb-0 px-3 px-md-4 py-2" role="status" hidden>
+    <strong>Demo-Modus</strong>
+    <span class="d-block d-sm-inline ms-sm-2">GPX-Uploads sind deaktiviert. Neue Zustandsmeldungen sind bis zum Neuladen dieser Seite sichtbar.</span>
+</div>
 <main class="container-fluid">
     <div class="row g-0">
         <section class="col-lg-8 map-panel" aria-label="Trailkarte">
@@ -112,10 +116,6 @@
                     <p id="import-status" class="small text-body-secondary mt-2 mb-0" role="status"></p>
                 </form>
             </details>
-            <footer id="demo-notice" class="alert alert-info mt-3 mb-0" role="status" hidden>
-                <strong>Demo-Modus</strong><br>
-                GPX-Uploads sind deaktiviert. Neue Zustandsmeldungen sind bis zum Neuladen dieser Seite sichtbar.
-            </footer>
         </aside>
     </div>
 </main>
