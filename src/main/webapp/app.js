@@ -31,7 +31,10 @@ async function loadSettings() {
         const { demoMode } = await request("/settings", { cache: "no-store" });
         byId("demo-notice").hidden = demoMode !== true;
         byId("report-form").hidden = typeof demoMode !== "boolean";
-        byId("import-panel").hidden = demoMode !== false;
+        const importPanel = byId("import-panel");
+        byId("import-fields").disabled = demoMode !== false;
+        importPanel.open = demoMode === true;
+        importPanel.hidden = typeof demoMode !== "boolean";
     } catch {
         byId("demo-notice").textContent = "GPX-Uploads und neue Zustandsmeldungen sind derzeit nicht verfügbar.";
         byId("demo-notice").hidden = false;
@@ -133,7 +136,6 @@ function selectTrail(feature, trailsLayer, map) {
     renderSelection(trailsLayer);
 
     byId("trail-name").textContent = feature.properties.name;
-    byId("trail-difficulty").textContent = feature.properties.difficulty;
     byId("trail-description").textContent = feature.properties.description;
     byId("forecast").replaceChildren();
     byId("reports-export").href = `exports/reports.csv?trail=${encodeURIComponent(selectedId)}`;
@@ -247,7 +249,7 @@ function startMap(container) {
         event.preventDefault();
         const form = event.currentTarget;
         const submit = byId("submit-import");
-        if (submit.disabled) return;
+        if (byId("import-fields").disabled || submit.disabled) return;
         const fields = new FormData(form);
         const file = fields.get("gpx");
         const status = byId("import-status");

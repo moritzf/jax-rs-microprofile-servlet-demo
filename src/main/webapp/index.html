@@ -8,10 +8,10 @@
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=4">
     <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script defer src="app.js?v=4"></script>
+    <script defer src="app.js?v=5"></script>
 </head>
 <body class="bg-body-tertiary">
 <header class="navbar bg-success text-white">
@@ -40,20 +40,13 @@
             </div>
         </section>
         <aside class="col-lg-4 p-3 p-xl-4">
-            <div id="demo-notice" class="alert alert-info" role="status" hidden>
-                <strong>Demo-Modus</strong><br>
-                GPX-Uploads sind deaktiviert. Neue Zustandsmeldungen sind bis zum Neuladen dieser Seite sichtbar.
-            </div>
             <h2 class="h5">Trails im Kartenausschnitt</h2>
             <p class="small text-body-secondary mb-2">Die drei vorinstallierten Strecken sind fiktive Beispiele.</p>
             <p id="map-status" class="small text-body-secondary" role="status">Trails werden geladen …</p>
             <div id="trails" class="list-group" role="group" aria-label="Sichtbare Trails"></div>
             <section id="details" class="card mt-3" aria-labelledby="trail-name" hidden>
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
-                        <h2 id="trail-name" class="h5 mb-0"></h2>
-                        <span id="trail-difficulty" class="badge text-bg-secondary"></span>
-                    </div>
+                    <h2 id="trail-name" class="h5 mb-1"></h2>
                     <p id="trail-description" class="small text-body-secondary mb-0"></p>
                     <section class="border-top mt-3 pt-3">
                         <h3 class="h6">Regenwahrscheinlichkeit am Trail-Einstieg</h3>
@@ -98,25 +91,31 @@
                     </section>
                 </div>
             </section>
-            <details id="import-panel" class="border rounded bg-body p-2 mt-3" hidden>
+            <details id="import-panel" class="border rounded p-2 mt-3" hidden>
                 <summary class="fw-semibold">GPX-Trail importieren</summary>
                 <form id="import-form" class="mt-2">
-                    <label for="gpx-file" class="form-label">GPX-Datei</label>
-                    <input id="gpx-file" class="form-control" type="file" name="gpx" accept=".gpx,application/gpx+xml"
-                           aria-describedby="gpx-limit" required>
-                    <p id="gpx-limit" class="form-text mb-2">Maximal 2 MiB.</p>
-                    <label for="import-name" class="form-label">Trailname</label>
-                    <input id="import-name" class="form-control mb-2" name="name" maxlength="100" required>
-                    <label for="import-difficulty" class="form-label">Schwierigkeitsgrad</label>
-                    <select id="import-difficulty" class="form-select mb-2" name="difficulty">
-                        <option>Leicht</option>
-                        <option selected>Mittel</option>
-                        <option>Schwer</option>
-                    </select>
-                    <button id="submit-import" class="btn btn-outline-success" type="submit">Trail importieren</button>
+                    <fieldset id="import-fields" disabled>
+                        <label for="gpx-file" class="form-label">GPX-Datei</label>
+                        <input id="gpx-file" class="form-control" type="file" name="gpx" accept=".gpx,application/gpx+xml"
+                               aria-describedby="gpx-limit" required>
+                        <p id="gpx-limit" class="form-text mb-2">Maximal 2 MiB.</p>
+                        <label for="import-name" class="form-label">Trailname</label>
+                        <input id="import-name" class="form-control mb-2" name="name" maxlength="100" required>
+                        <label for="import-difficulty" class="form-label">Schwierigkeitsgrad</label>
+                        <select id="import-difficulty" class="form-select mb-2" name="difficulty">
+                            <option>Leicht</option>
+                            <option selected>Mittel</option>
+                            <option>Schwer</option>
+                        </select>
+                        <button id="submit-import" class="btn btn-outline-success" type="submit">Trail importieren</button>
+                    </fieldset>
                     <p id="import-status" class="small text-body-secondary mt-2 mb-0" role="status"></p>
                 </form>
             </details>
+            <footer id="demo-notice" class="alert alert-info mt-3 mb-0" role="status" hidden>
+                <strong>Demo-Modus</strong><br>
+                GPX-Uploads sind deaktiviert. Neue Zustandsmeldungen sind bis zum Neuladen dieser Seite sichtbar.
+            </footer>
         </aside>
     </div>
 </main>

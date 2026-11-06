@@ -24,6 +24,13 @@
 .card[hidden] { display: none; }
 [role="status"]:empty { margin-bottom: 0; }
 
+#import-panel { background: var(--bs-body-bg); }
+#import-panel:has(fieldset:disabled) { color: var(--bs-secondary-color); }
+#import-fields:disabled .btn {
+    --bs-btn-disabled-color: var(--bs-secondary-color);
+    --bs-btn-disabled-border-color: var(--bs-border-color);
+}
+
 @media (min-width: 992px) {
     .map-panel {
         position: sticky;
