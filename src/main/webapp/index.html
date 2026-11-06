@@ -8,10 +8,10 @@
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-    <link rel="stylesheet" href="styles.css?v=5">
+    <link rel="stylesheet" href="styles.css?v=10">
     <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script defer src="app.js?v=7"></script>
+    <script defer src="app.js?v=8"></script>
 </head>
 <body class="bg-body-tertiary">
 <header class="navbar bg-success text-white">
@@ -26,10 +26,6 @@
         <span class="small">Tegernsee, Bayern</span>
     </div>
 </header>
-<div id="demo-notice" class="alert alert-info rounded-0 mb-0 px-3 px-md-4 py-2" role="status" hidden>
-    <strong>Demo-Modus</strong>
-    <span class="d-block d-sm-inline ms-sm-2">GPX-Uploads sind deaktiviert. Neue Zustandsmeldungen sind bis zum Neuladen dieser Seite sichtbar.</span>
-</div>
 <main class="container-fluid">
     <div class="row g-0">
         <section class="col-lg-8 map-panel" aria-label="Trailkarte">
@@ -89,7 +85,10 @@
                                 Notiz <span class="text-body-secondary fw-normal">(optional)</span>
                             </label>
                             <textarea id="note" class="form-control mb-2" name="note" rows="2" maxlength="280"></textarea>
-                            <button id="submit-report" class="btn btn-success" type="submit">Meldung speichern</button>
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                <button id="submit-report" class="btn btn-success" type="submit">Meldung speichern</button>
+                                <span id="report-demo-hint" class="small text-body-secondary" hidden>Demo-Modus: bis zum Neuladen sichtbar.</span>
+                            </div>
                             <p id="form-status" class="small text-body-secondary mt-2 mb-0" role="status"></p>
                         </form>
                     </section>
@@ -112,10 +111,14 @@
                             <option>Schwer</option>
                         </select>
                         <button id="submit-import" class="btn btn-outline-success" type="submit">Trail importieren</button>
+                        <p id="import-demo-hint" class="form-text mb-0" hidden>GPX-Uploads sind im Demo-Modus deaktiviert.</p>
                     </fieldset>
                     <p id="import-status" class="small text-body-secondary mt-2 mb-0" role="status"></p>
                 </form>
             </details>
+            <p id="settings-error" class="small text-body-secondary mt-2 mb-0" role="status" hidden>
+                GPX-Uploads und neue Zustandsmeldungen sind derzeit nicht verfügbar.
+            </p>
         </aside>
     </div>
 </main>

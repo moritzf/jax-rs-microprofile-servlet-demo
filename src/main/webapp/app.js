@@ -29,14 +29,14 @@ async function request(path, options = {}) {
 async function loadSettings() {
     try {
         const { demoMode } = await request("/settings", { cache: "no-store" });
-        byId("demo-notice").hidden = demoMode !== true;
+        byId("report-demo-hint").hidden = demoMode !== true;
+        byId("import-demo-hint").hidden = demoMode !== true;
         byId("report-form").hidden = typeof demoMode !== "boolean";
         const importPanel = byId("import-panel");
         byId("import-fields").disabled = demoMode !== false;
         importPanel.hidden = typeof demoMode !== "boolean";
     } catch {
-        byId("demo-notice").textContent = "GPX-Uploads und neue Zustandsmeldungen sind derzeit nicht verfügbar.";
-        byId("demo-notice").hidden = false;
+        byId("settings-error").hidden = false;
     }
 }
 
