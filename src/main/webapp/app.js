@@ -33,7 +33,6 @@ async function loadSettings() {
         byId("report-form").hidden = typeof demoMode !== "boolean";
         const importPanel = byId("import-panel");
         byId("import-fields").disabled = demoMode !== false;
-        importPanel.open = demoMode === true;
         importPanel.hidden = typeof demoMode !== "boolean";
     } catch {
         byId("demo-notice").textContent = "GPX-Uploads und neue Zustandsmeldungen sind derzeit nicht verfügbar.";
